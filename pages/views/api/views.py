@@ -61,6 +61,31 @@ class PageDetailAPIView(generics.RetrieveAPIView):
         return get_object_or_404(Page, pk=self.kwargs['page_id'])
 
 
+class PageDetailVersionAPIView(generics.RetrieveAPIView):
+    """
+    Endpoint to get details of specific page version
+    """
+    permission_classes = (IsAuthenticated,)
+    serializer_class = PagesSerializer
+
+    def get(self, request, *args, **kwargs):
+        """
+        Checks if page exists.
+        Checks if page version exists.
+        Returns a JSON page version.
+        """
+        try:
+            page = Page.objects.get(id=self.kwargs['page_id'])
+        except Page.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        result = get_object_or_404(Version.objects.get_for_object(page),
+                                   pk=self.kwargs['version_id'])
+
+        serializer = self.get_serializer(result, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class PageUpdateAPIView(generics.UpdateAPIView):
     """
     Endpoint to update specific page
