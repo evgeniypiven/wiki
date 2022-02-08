@@ -82,7 +82,7 @@ class PageDetailVersionAPIView(generics.RetrieveAPIView):
         result = get_object_or_404(Version.objects.get_for_object(page),
                                    pk=self.kwargs['version_id'])
 
-        serializer = self.get_serializer(result, many=True)
+        serializer = self.get_serializer(result)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
